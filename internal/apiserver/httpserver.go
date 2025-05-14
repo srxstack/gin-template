@@ -9,6 +9,8 @@ import (
 
 	"github.com/srxstack/gin-template/internal/apiserver/handler"
 	"github.com/srxstack/srxstack/pkg/server"
+
+	mw "github.com/srxstack/gin-template/internal/pkg/middleware"
 )
 
 // ginServer 定义一个使用 Gin 框架开发的 HTTP 服务器.
@@ -21,8 +23,9 @@ var _ server.Server = (*ginServer)(nil)
 
 // NewGinServer 初始化一个新的 Gin 服务器实例.
 func (c *ServerConfig) NewGinServer() server.Server {
-	// 创建 Gin 引擎
 	engine := gin.New()
+
+	engine.Use(gin.Recovery(), mw.NoCache, mw.Cors, mw.Secure, mw.RequestIDMiddleware())
 
 	// 注册 REST API 路由
 	c.InstallRESTAPI(engine)
